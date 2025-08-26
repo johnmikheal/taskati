@@ -5,8 +5,11 @@ import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taskati/core/constants/app_images.dart';
 import 'package:taskati/core/functions/dialog.dart';
+import 'package:taskati/core/functions/navigation.dart';
+import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/color.dart';
 import 'package:taskati/core/widgets/main_button.dart';
+import 'package:taskati/features/home/page/home_screen.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({super.key});
@@ -27,10 +30,13 @@ class _UploadScreenState extends State<UploadScreen> {
           TextButton(
             onPressed: () {
               if (path != null && nameController.text.isNotEmpty) {
-                print('done');
+                LocalHelper.cachData(LocalHelper.kIsUpload, true);
+                LocalHelper.cachData(LocalHelper.kName, nameController.text);
+                LocalHelper.cachData(LocalHelper.kImage, path);
+                pushReplacement(context, HomeScreen());
               } else if (path == null && nameController.text.isNotEmpty) {
                 showErrorDialog(context, 'please select an image');
-              } else if (path == null && nameController.text.isEmpty) {
+              } else if (path != null && nameController.text.isEmpty) {
                 showErrorDialog(context, 'please enter your name');
               } else {
                 showErrorDialog(
@@ -75,6 +81,7 @@ class _UploadScreenState extends State<UploadScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               MainButton(
+                                width: double.infinity,
                                 title: 'Upload From Camera',
                                 onPressed: () {
                                   uploadImageFromCamera(true);
@@ -83,6 +90,8 @@ class _UploadScreenState extends State<UploadScreen> {
                               SizedBox(height: 10),
 
                               MainButton(
+                                width: double.infinity,
+
                                 title: 'Upload From Gallery',
                                 onPressed: () {
                                   uploadImageFromCamera(false);

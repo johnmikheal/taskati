@@ -20,6 +20,7 @@ showUploadButtomSheet(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: [
               MainButton(
+                width: double.infinity,
                 title: 'Upload From Camera',
                 onPressed: () {
                   uploadImageFromCamera();
@@ -28,6 +29,7 @@ showUploadButtomSheet(BuildContext context) {
               SizedBox(height: 10),
 
               MainButton(
+                width: double.infinity,
                 title: 'Upload From Gallery',
                 onPressed: () {
                   uploadImageFromGallery();

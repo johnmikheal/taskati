@@ -7,10 +7,14 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
+  date_picker_timeline: ^1.2.7
   flutter:
     sdk: flutter
   gap: ^3.0.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   image_picker: ^1.2.0
+  intl: ^0.20.2
   lottie: ^3.3.1
 
 dev_dependencies:

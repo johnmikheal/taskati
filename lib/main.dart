@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/color.dart';
 import 'package:taskati/core/utils/text_style.dart';
 import 'package:taskati/features/intro/splash_screen.dart';
 
-void main() {
+Future<void> main() async {
+  await Hive.initFlutter();
+  await LocalHelper.init();
   runApp(const Taskati());
 }
 
@@ -15,6 +19,7 @@ class Taskati extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        appBarTheme: AppBarTheme(foregroundColor: AppColors.primaryColor),
         fontFamily: 'poppins',
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyles.getSmallTextStyle(),
