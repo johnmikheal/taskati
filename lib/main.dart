@@ -5,8 +5,15 @@ import 'package:taskati/core/utils/color.dart';
 import 'package:taskati/core/utils/text_style.dart';
 import 'package:taskati/features/intro/splash_screen.dart';
 
+
+
 Future<void> main() async {
-  await Hive.initFlutter();
+  WidgetsFlutterBinding.ensureInitialized(); //
+
+  await Hive.initFlutter();   
+
+  await Hive.deleteBoxFromDisk('task'); //
+
   await LocalHelper.init();
   runApp(const Taskati());
 }

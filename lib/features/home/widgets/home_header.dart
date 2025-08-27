@@ -27,15 +27,22 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
         ),
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: AppColors.primaryColor,
-
+        GestureDetector(
+          onTap: () {
+            // pushTo(context, ProfileScreen()).then((value) {
+            //   setState((){});
+            // },)
+          },
           child: CircleAvatar(
-            radius: 22,
-            backgroundImage: LocalHelper.getData(LocalHelper.kImage) != null
-                ? FileImage(File(LocalHelper.getData(LocalHelper.kImage)))
-                : AssetImage(AppImages.user),
+            radius: 24,
+            backgroundColor: AppColors.primaryColor,
+          
+            child: CircleAvatar(
+              radius: 22,
+              backgroundImage: LocalHelper.getData(LocalHelper.kImage) != null
+                  ? FileImage(File(LocalHelper.getData(LocalHelper.kImage)))
+                  : AssetImage(AppImages.user),
+            ),
           ),
         ),
       ],

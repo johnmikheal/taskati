@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:taskati/core/models/task_model.dart';
+import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/color.dart';
 import 'package:taskati/core/utils/text_style.dart';
 import 'package:taskati/core/widgets/main_button.dart';
@@ -32,6 +34,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     AppColors.redColor,
   ];
 
+  var formKey = GlobalKey<FormState>();
+
   int SelectedColor = 0;
   @override
   Widget build(BuildContext context) {
@@ -52,42 +56,83 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
         child: MainButton(
           title: 'Create Task',
-          onPressed: () {},
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
+              var id = DateTime.now().microsecondsSinceEpoch.toString();
+              LocalHelper.cachTask(
+                id,
+                TaskModel(
+                  id: id,
+                  title: titleController.text,
+                  description: descriptionController.text,
+                  date: dateController.text,
+                  startTime: startTimeController.text,
+                  endTime: endTimeController.text,
+                  color: SelectedColor,
+                  isCompleted: false,
+                ),
+              );
+              Navigator.pop(context);
+            }
+          },
           width: double.infinity,
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'title',
-              style: TextStyles.getBodyTextStyle(color: AppColors.primaryColor),
-            ),
-            Gap(6),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'title',
+                style: TextStyles.getBodyTextStyle(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+              Gap(6),
 
-            TextFormField(
-              decoration: InputDecoration(hint: Text('Enter Title')),
-            ),
-            Gap(12),
-            Text(
-              'Description',
-              style: TextStyles.getBodyTextStyle(color: AppColors.primaryColor),
-            ),
-            Gap(6),
+              TextFormField(
+                controller: titleController,
 
-            TextFormField(
-              maxLines: 3,
-              decoration: InputDecoration(hint: Text('Enter Description...')),
-            ),
-            Gap(12),
-            dateSelection(),
-            Gap(12),
-            timeSelection(),
-            Gap(20),
-            colorSelection(),
-          ],
+                decoration: InputDecoration(hint: Text('Enter Title')),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please enter title';
+                  }
+                  return null;
+                },
+              ),
+              Gap(12),
+              Text(
+                'Description',
+                style: TextStyles.getBodyTextStyle(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+              Gap(6),
+
+              TextFormField(
+                controller: descriptionController,
+
+                maxLines: 3,
+                decoration: InputDecoration(hint: Text('Enter Description...')),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please enter decoration';
+                  }
+                  return null;
+                },
+              ),
+              Gap(12),
+              dateSelection(),
+              Gap(12),
+              timeSelection(),
+              Gap(20),
+              colorSelection(),
+            ],
+          ),
         ),
       ),
     );
