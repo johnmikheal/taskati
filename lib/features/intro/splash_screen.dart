@@ -5,7 +5,6 @@ import 'package:taskati/core/constants/app_images.dart';
 import 'package:taskati/core/functions/navigation.dart';
 import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/text_style.dart';
-import 'package:taskati/features/home/page/home_screen.dart';
 import 'package:taskati/features/intro/upload_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,10 +20,11 @@ class _SplashScreenState extends State<SplashScreen> {
     var isUpload = LocalHelper.getData(LocalHelper.kIsUpload) ?? false;
     super.initState();
     Future.delayed(Duration(seconds: 3), () {
-      pushReplacement(context, isUpload ? HomeScreen() : UploadScreen());
+      pushReplacement(context, UploadScreen());
     });
   }
 
+  //isUpload ? HomeScreen() : UploadScreen()
   @override
   Widget build(BuildContext context) {
     return Scaffold(
