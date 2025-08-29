@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:taskati/core/constants/task_colors.dart';
 import 'package:taskati/core/models/task_model.dart';
 import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/color.dart';
@@ -8,35 +9,46 @@ import 'package:taskati/core/utils/text_style.dart';
 import 'package:taskati/core/widgets/main_button.dart';
 import 'package:taskati/features/add_task/widgets/time_field_selection.dart';
 
-class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
-
+class AddEditTaskScreen extends StatefulWidget {
+  const AddEditTaskScreen({super.key, this.taskModel});
+  final TaskModel? taskModel;
   @override
-  State<AddTaskScreen> createState() => _AddTaskScreenState();
+  State<AddEditTaskScreen> createState() => _AddEditTaskScreenState();
 }
 
-class _AddTaskScreenState extends State<AddTaskScreen> {
+class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   var titleController = TextEditingController();
   var descriptionController = TextEditingController();
   var dateController = TextEditingController(
-    text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    // text: DateFormat('yyyy-MM-dd').format(DateTime.now()),
   );
   var startTimeController = TextEditingController(
-    text: DateFormat('hh:mm a').format(DateTime.now()),
+    // text: DateFormat('hh:mm a').format(DateTime.now()),
   );
   var endTimeController = TextEditingController(
-    text: DateFormat('hh:mm a').format(DateTime.now()),
+    // text: DateFormat('hh:mm a').format(DateTime.now()),
   );
-
-  List<Color> Colors = [
-    AppColors.primaryColor,
-    AppColors.orangeColor,
-    AppColors.redColor,
-  ];
 
   var formKey = GlobalKey<FormState>();
 
   int SelectedColor = 0;
+  @override
+  void initState() {
+    super.initState();
+    titleController.text = widget.taskModel?.title ?? '';
+    descriptionController.text = widget.taskModel?.description ?? '';
+    dateController.text =
+        widget.taskModel?.date ??
+        DateFormat('yyyy-MM-dd').format(DateTime.now());
+    startTimeController.text =
+        widget.taskModel?.startTime ??
+        DateFormat('hh:mm a').format(DateTime.now());
+    endTimeController.text =
+        widget.taskModel?.endTime ??
+        DateFormat('hh:mm a').format(DateTime.now());
+    SelectedColor = widget.taskModel?.color ?? 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,10 +67,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
         child: MainButton(
-          title: 'Create Task',
+          title: widget.taskModel != null ? 'Update Task' : 'Create Task',
           onPressed: () {
             if (formKey.currentState!.validate()) {
-              var id = DateTime.now().microsecondsSinceEpoch.toString();
+              String id = '';
+              if (widget.taskModel != null) {
+                id = widget.taskModel!.id;
+              } else {
+                id = DateTime.now().millisecondsSinceEpoch.toString();
+              }
+              // var id = DateTime.now().microsecondsSinceEpoch.toString();
               LocalHelper.cachTask(
                 id,
                 TaskModel(
@@ -149,7 +167,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         Gap(6),
         Row(
           spacing: 6,
-          children: List.generate(Colors.length, (index) {
+          children: List.generate(taskColors.length, (index) {
             return GestureDetector(
               onTap: () {
                 setState(() {
@@ -157,7 +175,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 });
               },
               child: CircleAvatar(
-                backgroundColor: Colors[index],
+                backgroundColor: taskColors[index],
                 child: SelectedColor == index
                     ? Icon(Icons.check, color: AppColors.whiteColor)
                     : null,

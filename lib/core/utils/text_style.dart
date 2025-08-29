@@ -3,28 +3,27 @@ import 'package:taskati/core/utils/color.dart';
 
 class TextStyles {
   static TextStyle getTitleTextStyle({
-    double fontSize = 18,
-    FontWeight fontWeight = FontWeight.bold,
-    Color color = AppColors.blackColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
   }) {
     return TextStyle(
       fontFamily: 'poppins',
-      fontSize: fontSize,
-      fontWeight: fontWeight,
+      fontSize: fontSize ?? 18,
+      fontWeight: fontWeight ?? FontWeight.bold,
       color: color,
     );
   }
 
   static TextStyle getBodyTextStyle({
-    double fontSize = 16,
-    FontWeight fontWeight = FontWeight.bold,
-    Color color = AppColors.blackColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
   }) {
     return TextStyle(
       fontFamily: 'poppins',
-
-      fontSize: fontSize,
-      fontWeight: fontWeight,
+      fontSize: fontSize ?? 16,
+      fontWeight: fontWeight ?? FontWeight.bold,
       color: color,
     );
   }

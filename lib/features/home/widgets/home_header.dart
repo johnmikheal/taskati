@@ -2,13 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:taskati/core/constants/app_images.dart';
+import 'package:taskati/core/functions/navigation.dart';
 import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/color.dart';
 import 'package:taskati/core/utils/text_style.dart';
+import 'package:taskati/features/profile/profile_screen.dart';
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends StatefulWidget {
   const HomeHeader({super.key});
 
+  @override
+  State<HomeHeader> createState() => _HomeHeaderState();
+}
+
+class _HomeHeaderState extends State<HomeHeader> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -29,14 +36,14 @@ class HomeHeader extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            // pushTo(context, ProfileScreen()).then((value) {
-            //   setState((){});
-            // },)
+            pushTo(context, ProfileScreen()).then((value) {
+              setState(() {});
+            });
           },
           child: CircleAvatar(
             radius: 24,
             backgroundColor: AppColors.primaryColor,
-          
+
             child: CircleAvatar(
               radius: 22,
               backgroundImage: LocalHelper.getData(LocalHelper.kImage) != null

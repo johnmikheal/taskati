@@ -1,76 +1,93 @@
+import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:taskati/core/models/task_model.dart';
+import 'package:taskati/core/services/local_helper.dart';
 import 'package:taskati/core/utils/color.dart';
 import 'package:taskati/core/utils/text_style.dart';
+import 'package:taskati/features/home/widgets/task_card.dart';
 
-class TasksBuilder extends StatelessWidget {
-  const TasksBuilder({super.key, required this.task});
-  final TaskModel task;
+class TasksBuilder extends StatefulWidget {
+  const TasksBuilder({super.key});
+
+  @override
+  State<TasksBuilder> createState() => _TasksBuilderState();
+}
+
+class _TasksBuilderState extends State<TasksBuilder> {
+  String selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 110,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: AppColors.primaryColor,
-      ),
-      child: Row(
+    return Expanded(
+      child: Column(
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyles.getTitleTextStyle(
-                      color: AppColors.whiteColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Gap(4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.watch_later_outlined,
-                        color: AppColors.whiteColor,
-                        size: 19,
-                      ),
-                      Gap(5),
-                      Text(
-                        '${task.startTime} - ${task.endTime}',
-                        style: TextStyles.getSmallTextStyle(
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Gap(4),
-                  Text(
-                    task.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyles.getBodyTextStyle(
-                      fontWeight: FontWeight.w300,
-                      color: AppColors.whiteColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          DatePicker(
+            height: 100,
+            width: 70,
+            DateTime.now(),
+            initialSelectedDate: DateTime.now(),
+            selectionColor: AppColors.primaryColor,
+            selectedTextColor: Colors.white,
+            dayTextStyle: TextStyles.getBodyTextStyle(),
+            monthTextStyle: TextStyles.getBodyTextStyle(),
+            dateTextStyle: TextStyles.getBodyTextStyle(),
+            onDateChange: (date) {
+              setState(() {
+                selectedDate = DateFormat('yyyy-MM-dd').format(date);
+              });
+            },
           ),
-          Gap(8),
-          Container(width: 1, height: 70, color: AppColors.whiteColor),
-          Transform.rotate(
-            angle: 3.14 / 2,
-            child: Text(
-              task.isCompleted ? 'Completed' : 'Todo',
-              style: TextStyles.getBodyTextStyle(color: AppColors.whiteColor),
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: LocalHelper.taskBox.listenable(),
+              builder: (context, box, child) {
+                List<TaskModel> tasks = [];
+                for (var model in box.values) {
+                  if (model.date == selectedDate) {
+                    tasks.add(model);
+                  }
+                }
+                if (tasks.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/images/embty task.json',
+                          width: 400,
+                        ),
+                        Text(
+                          'No Task Found',
+                          style: TextStyles.getBodyTextStyle(),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return ListView.separated(
+                  itemBuilder: (context, index) {
+                    return TaskCard(
+                      task: tasks[index],
+                      onComplete: () {
+                        box.put(
+                          tasks[index].id,
+                          tasks[index].copyWith(isCompleted: true),
+                        );
+                      },
+                      onDelete: () {
+                        box.delete(tasks[index].id);
+                      },
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Gap(10);
+                  },
+                  itemCount: tasks.length,
+                );
+              },
             ),
           ),
         ],
